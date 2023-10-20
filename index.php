@@ -75,6 +75,34 @@ $router->get("/user-info/{username}/{password}", function(string $username, stri
     exit(200);
 });
 
+
+$router->get("/change-pass/{username}/{password}/{newpassword}", function(string $username, string $password, string $newpassword) use ($db){
+    $user = ensureUser($username, $password, $db);
+    if(!$user){
+        echo json_encode([
+            "success" => false,
+            "message" => "Invalid credentials",
+            "data" => []
+        ]);
+        exit(400);
+    }
+
+    $db->update("users", [
+        "password" => hash("sha256", $newpassword)
+    ], "username = '" . $user["username"] ."'");
+
+    echo json_encode([
+        "success" => true,
+        "message" => "User info",
+        "data" => [
+            "username" => $user["username"],
+            "balance" => $user["balance"],
+            "is_mayer" => $user["is_mayer"]
+        ]
+    ]);
+    exit(200);
+});
+
 $router->get("/send/{targetUsername}/{amount}/{username}/{password}", function(string $targetUsername, int $amount, string $username, string $password) use ($db){
     $user = ensureUser($username, $password, $db);
     if(!$user){
