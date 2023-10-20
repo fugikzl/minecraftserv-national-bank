@@ -105,6 +105,15 @@ $router->get("/send/{targetUsername}/{amount}/{username}/{password}", function(s
         exit(400);
     }
 
+    if($amount <= 0){
+        echo json_encode([
+            "success" => false,
+            "message" => "Invalid target",
+            "data" => []
+        ]);
+        exit(400);
+    }
+
     $db->insert("transactions", [
         "sender_id" => $user["id"],
         "receiver_id" => $targetUser[0]["id"],
