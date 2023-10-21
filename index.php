@@ -211,6 +211,14 @@ $router->get("/user-info/{targerUsername}/{username}/{password}", function(strin
 });
 
 $router->get("/generate/{amount}/{username}/{password}", function(int $amount, string $username, string $password) use ($db){
+
+    echo json_encode([
+        "success" => false,
+        "message" => "Can't emit more money",
+        "data" => []
+    ]);
+    exit(400);
+
     $user = ensureUser($username, $password, $db);
     if(!$user){
         echo json_encode([
