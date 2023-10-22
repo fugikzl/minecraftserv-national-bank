@@ -87,7 +87,7 @@ $router->get("/receivments/{count}/{username}/{password}", function(int $count, 
     }
 
     $receiverId = $user["id"];
-    $transactions = $db->select("transactions", "receiver_id = '$receiverId' ORDER BY 'id' DESC LIMIT $count");
+    $transactions = $db->select("transactions", "receiver_id = '$receiverId' ORDER BY id DESC LIMIT $count");
     echo json_encode([
         "success" => true,
         "message" => "History of last $count receivments",
