@@ -75,6 +75,48 @@ $router->get("/user-info/{username}/{password}", function(string $username, stri
     exit(200);
 });
 
+$router->get("/receivments/{count}/{username}/{password}", function(int $count, string $username, string $password) use ($db){
+    $user = ensureUser($username, $password, $db);
+    if(!$user){
+        echo json_encode([
+            "success" => false,
+            "message" => "Invalid credentials",
+            "data" => []
+        ]);
+        exit(400);
+    }
+
+    $receiverId = $user["id"];
+    $transactions = $db->select("transactions", "receiver_id = '$receiverId' LIMIT $count");
+    echo json_encode([
+        "success" => true,
+        "message" => "History of last $count receivments",
+        "data" => $transactions
+    ]);
+    exit(200);
+});
+
+$router->get("/spendings/{count}/{username}/{password}", function(int $count, string $username, string $password) use ($db){
+    $user = ensureUser($username, $password, $db);
+    if(!$user){
+        echo json_encode([
+            "success" => false,
+            "message" => "Invalid credentials",
+            "data" => []
+        ]);
+        exit(400);
+    }
+
+    $spenderId = $user["id"];
+    $transactions = $db->select("transactions", "sender_id = '$spenderId' LIMIT $count");
+    echo json_encode([
+        "success" => true,
+        "message" => "History of last $count spendings",
+        "data" => $transactions
+    ]);
+    exit(200);
+});
+
 
 $router->get("/change-pass/{username}/{password}/{newpassword}", function(string $username, string $password, string $newpassword) use ($db){
     $user = ensureUser($username, $password, $db);
@@ -212,12 +254,12 @@ $router->get("/user-info/{targerUsername}/{username}/{password}", function(strin
 
 $router->get("/generate/{amount}/{username}/{password}", function(int $amount, string $username, string $password) use ($db){
 
-    echo json_encode([
-        "success" => false,
-        "message" => "Can't emit more money",
-        "data" => []
-    ]);
-    exit(400);
+    // echo json_encode([
+    //     "success" => false,
+    //     "message" => "Can't emit more money",
+    //     "data" => []
+    // ]);
+    // exit(400);
 
     $user = ensureUser($username, $password, $db);
     if(!$user){
