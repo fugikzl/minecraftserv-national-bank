@@ -2,15 +2,33 @@
 
 namespace App\Database;
 
+use App\Core\Contracts\Database as ContractsDatabase;
+use App\Core\Contracts\Singleton;
 use PDO;
 
-class Database
+final class Database implements Singleton, ContractsDatabase
 {
-    public function __construct(
+    private static Database $instance;
+
+    public static function getInstance() : static
+    {
+        if(!isset(static::$instance) || !(static::$instance instanceof static)){
+            $pdo = new PDO("sqlite:".__DIR__."/../../database/db.db");
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->exec("PRAGMA foreign_keys = ON;");
+            $instance = new static($pdo);
+
+            static::$instance = $instance;
+        }
+
+        return static::$instance;
+    }
+
+    private function __construct(
         private PDO $pdo
     ){}
 
-    public function insert(string $table, array $data)
+    public function insert(string $table, array $data) : string|false
     {
         $columns = implode(', ', array_keys($data));
         $placeholders = ':'.implode(', :', array_keys($data));
@@ -49,7 +67,7 @@ class Database
         $stmt->execute();
     }
 
-    public function select(string $table, string $condition = null)
+    public function select(string $table, string $condition = null) : array|false
     {
         $query = "SELECT * FROM $table";
         if($condition !== null){

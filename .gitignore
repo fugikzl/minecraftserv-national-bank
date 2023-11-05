@@ -2,3 +2,5 @@
 db.db
 database/db.db
 */db.db
+.vscode/launch.json
+database/db.db

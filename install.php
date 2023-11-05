@@ -8,7 +8,7 @@ if(!isset($argv[1]) || !isset($argv[2])){
 }
 require_once __DIR__ . "/migrate.php";
 
-$db = new Database($pdo);
+$db = Database::getInstance();
 $user = $db->insert("users", [
     "username" => $argv[1],
     "password" => hash("sha256", $argv[2]),

@@ -23,10 +23,21 @@ $migrations[] = new Migration("transactions", $pdo, [
     "summ" => "INTEGER|NOT NULL"
 ]);
 
-try {
-    foreach($migrations as $migration){
+$migrations[] = new Migration("patents", $pdo, [
+    "name" => "TEXT|PRIMARY KEY",
+    "summ" => "INTEGER|NOT NULL"
+]);
+
+$migrations[] = new Migration("patents_user", $pdo, [
+    "id" => "INTEGER PRIMARY KEY AUTOINCREMENT", 
+    "username" => "TEXT|NOT NULL",
+    "patent" => "TEST|NOT NULL REFERENCES patents(name)"
+]);
+
+foreach($migrations as $migration){
+    try {
         $migration->migrate();
+    } catch (\Throwable $th) {
+        echo("\nERROR: Could not able to execute " . $e->getMessage());
     }
-} catch(PDOException $e) {
-    die("ERROR: Could not able to execute " . $e->getMessage());
 }
